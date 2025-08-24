@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Моя Аудиозапись</title>
+    <title>Моя Аудиозапись - Только для прослушивания</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 50px;
             background-color: #f4f4f4;
+            user-select: none; 
         }
         .container {
             background: white;
@@ -23,26 +24,110 @@
             color: #333;
             margin-bottom: 20px;
         }
-        audio {
-            width: 100%;
-            margin-top: 25px;
-            outline: none;
+        
+        #hiddenAudio {
+            display: none;
         }
-        p {
+        
+        .controls {
+            margin-top: 25px;
+        }
+        button {
+            background-color: #4CAF50; 
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #status {
+            margin-top: 15px;
+            font-style: italic;
             color: #666;
-            line-height: 1.6;
         }
     </style>
 </head>
 <body>
+
     <div class="container">
         <h1>Зародыш мой видели очи твои</h1>
         <p>История любви</p>
 
-        <audio controls>
+        
+        <audio id="hiddenAudio">
+            
             <source src="SJON.mp3" type="audio/mpeg">
-            Ваш браузер не поддерживает элемент audio. 
+            Ваш браузер не поддерживает элемент audio.
         </audio>
+
+        
+        <div class="controls">
+            <button id="playBtn">▶️ Воспроизвести</button>
+            <button id="pauseBtn" disabled>⏸️ Пауза</button>
+            <button id="stopBtn" disabled>⏹️ Остановить</button>
+        </div>
+        <p id="status">Нажмите "Воспроизвести"...</p>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const audio = document.getElementById('hiddenAudio');
+            const playBtn = document.getElementById('playBtn');
+            const pauseBtn = document.getElementById('pauseBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const status = document.getElementById('status');
+
+            
+            playBtn.addEventListener('click', function() {
+                audio.play();
+                playBtn.disabled = true;
+                pauseBtn.disabled = false;
+                stopBtn.disabled = false;
+                status.textContent = 'Воспроизведение...';
+            });
+
+            
+            pauseBtn.addEventListener('click', function() {
+                audio.pause();
+                playBtn.disabled = false;
+                pauseBtn.disabled = true;
+                stopBtn.disabled = false;
+                status.textContent = 'На паузе.';
+            });
+
+            
+            stopBtn.addEventListener('click', function() {
+                audio.pause();
+                audio.currentTime = 0; // Перематываем аудио в начало
+                playBtn.disabled = false;
+                pauseBtn.disabled = true;
+                stopBtn.disabled = true;
+                status.textContent = 'Аудио остановлено.';
+            });
+
+            
+            audio.addEventListener('ended', function() {
+                playBtn.disabled = false;
+                pauseBtn.disabled = true;
+                stopBtn.disabled = true;
+                status.textContent = 'Воспроизведение завершено.';
+            });
+        });
+    </script>
+
 </body>
 </html>
